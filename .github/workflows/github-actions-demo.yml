@@ -1,0 +1,14 @@
+name: Shopping helper
+on: [push]
+jobs:
+  build_vue:
+    runs-on: ubuntu-latest
+    name: Shopping helper
+    steps:
+    - uses: actions/checkout@v2
+    - id: Shopping-helper
+      uses: xRealNeon/VuePagesAction@1.0.1
+      with:
+        username: 'webchillgames'
+        reponame: 'shopping-helper'
+        token: ${{ secrets.GITHUB_TOKEN }}
