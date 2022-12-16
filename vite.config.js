@@ -15,4 +15,11 @@ export default defineConfig({
     port: 8080,
     host: true,
   },
+  css: {
+    preprocessorOptions: {
+      scss: {
+        additionalData: `@import '@/styles/base.scss';`,
+      },
+    },
+  },
 });

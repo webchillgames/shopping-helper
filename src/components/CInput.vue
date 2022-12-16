@@ -44,9 +44,13 @@ export default {
 
 <style lang="scss">
 .c-input {
+  display: flex;
+
   input {
     padding: 3px;
     border: none;
+    box-sizing: border-box;
+    height: 100%;
 
     &:focus {
       outline: none;
@@ -54,9 +58,9 @@ export default {
     }
   }
 
-  input:first-child {
+  input[type="text"] {
     border-radius: 0;
-    border-right: 1px solid grey;
+    border-right: 1px solid #12232e;
   }
 }
 </style>
