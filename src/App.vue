@@ -16,26 +16,27 @@
       </div>
 
       <div class="table">
-        <div class="table__content">
-          <div class="table__titles">
-            <span v-if="isNamed">Продукт</span>
-            <span>Цена</span>
-          </div>
-          <ul>
-            <li v-for="(item, idx) in items" :key="item.id">
-              <CInput
-                :id="item.id"
-                :caption="item.caption"
-                :price="item.price"
-                :isNamed="isNamed"
-                :class="{ 'only-price': !isNamed }"
-                @input-caption="setCaption($event.target.value, item)"
-                @input-price="setPrice($event.target.value, item)"
-              />
-              <button @click="deleteItem(idx)" class="table__delete">x</button>
-            </li>
-          </ul>
+        <div class="table__titles">
+          <span v-if="isNamed">Продукт</span>
+          <span>Цена</span>
+          <span>шт.</span>
         </div>
+        <ul>
+          <li v-for="(item, idx) in items" :key="item.id">
+            <CInput
+              :id="item.id"
+              :caption="item.caption"
+              :price="item.price"
+              :quantity="item.quantity"
+              :isNamed="isNamed"
+              :class="{ 'only-price': !isNamed }"
+              @input-caption="setCaption($event.target.value, item)"
+              @input-price="setPrice($event.target.value, item)"
+              @input-quantity="setQuantity($event.target.value, item)"
+            />
+            <button @click="deleteItem(idx)" class="table__delete">x</button>
+          </li>
+        </ul>
 
         <button @click="addNewItem" type="button" class="table__add">+</button>
       </div>
@@ -48,7 +49,7 @@
       </li>
 
       <li>
-        <h4>{{ items.length }}</h4>
+        <h4>{{ quantity }}</h4>
         <p>количество</p>
       </li>
     </ul>
@@ -71,6 +72,7 @@ export default {
           id: 1,
           caption: "",
           price: 0,
+          quantity: 1,
         },
       ]
     );
@@ -88,6 +90,7 @@ export default {
         id: items.value.length + 1,
         caption: "",
         price: 0,
+        quantity: 1,
       });
     }
 
@@ -108,12 +111,29 @@ export default {
       item.price = Number(newPrice);
     }
 
+    function setQuantity(newQuantity, item) {
+      item.quantity = Number(newQuantity);
+    }
+
     const total = computed(() => {
       let r = 0;
 
       items.value.forEach((v) => {
+        let q = v.quantity || 1;
         if (typeof v.price === "number") {
-          r = r + v.price;
+          r = r + v.price * q;
+        }
+      });
+
+      return r;
+    });
+
+    const quantity = computed(() => {
+      let r = 0;
+
+      items.value.forEach((v) => {
+        if (typeof v.quantity === "number") {
+          r = r + v.quantity;
         }
       });
 
@@ -121,6 +141,7 @@ export default {
     });
 
     return {
+      quantity,
       items,
       total,
       isNamed,
@@ -128,6 +149,7 @@ export default {
       addNewItem,
       setPrice,
       deleteItem,
+      setQuantity,
     };
   },
 };
@@ -140,24 +162,23 @@ export default {
   height: 100%;
   display: flex;
   flex-direction: column;
+  box-sizing: border-box;
 }
 
 .content {
-  flex: 1 1 auto;
+  flex-grow: 1;
 }
 
 .total {
-  flex: 0 1 auto;
+  flex-shrink: 0;
 }
 
 .table {
-  display: flex;
-  flex-direction: column;
   padding: 0 8px;
-  align-items: center;
 
   &__content {
     flex-grow: 1;
+    box-sizing: border-box;
   }
 
   &__add {
@@ -171,6 +192,7 @@ export default {
     color: #fff;
     border: none;
     border-radius: 2px;
+    margin: 10px auto;
   }
 
   &__delete {
@@ -186,12 +208,18 @@ export default {
   }
 
   &__titles {
+    // max-width: 500px;
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: 40% 40% 20%;
     text-transform: uppercase;
     border-top-right-radius: 8px;
     border-top-left-radius: 8px;
-    padding: 16px 8px;
+    font-size: 14px;
+    padding: 8px 0;
+
+    span {
+      flex-grow: 1;
+    }
   }
 
   ul {
@@ -205,6 +233,7 @@ export default {
     position: relative;
     border: 1px solid #222b1b;
     border-top: none;
+    max-width: 500px;
   }
 
   li:first-child {
@@ -217,16 +246,16 @@ export default {
   justify-content: center;
   flex-wrap: wrap;
   margin: 0;
-  margin-top: 40px;
+  height: 250px;
   list-style: none;
-  padding: 16px;
+  padding: 8px 16px;
   background-color: #f1ebd8;
 
   li {
     padding: 8px;
     width: auto;
     min-width: 100px;
-    height: 100px;
+    height: 50px;
     border-radius: 8px;
     color: #fff;
     display: flex;
@@ -235,10 +264,10 @@ export default {
     justify-content: center;
 
     h4 {
-      font-size: 32px;
-      line-height: 36px;
+      font-size: 24px;
+      line-height: 30px;
       margin: 0;
-      margin-bottom: 20px;
+      margin-bottom: 4px;
     }
 
     p {

@@ -1,5 +1,5 @@
 <template>
-  <div class="c-input">
+  <div class="c-input" :class="{ nameless: !isNamed }">
     <input
       v-if="isNamed"
       id="caption"
@@ -13,6 +13,14 @@
       type="number"
       :value="price ? price : null"
       @input="$emit('input-price', $event)"
+    />
+
+    <input
+      id="quantity"
+      type="number"
+      :value="quantity"
+      @input="$emit('input-quantity', $event)"
+      class="c-input__quantity"
     />
   </div>
 </template>
@@ -29,6 +37,10 @@ export default {
       type: Number,
       required: true,
     },
+    quantity: {
+      type: Number,
+      required: true,
+    },
     id: {
       type: Number,
       required: true,
@@ -38,13 +50,15 @@ export default {
       required: true,
     },
   },
-  emits: ["input-caption", "input-price"],
+  emits: ["input-caption", "input-price", "input-quantity"],
 };
 </script>
 
 <style lang="scss">
 .c-input {
-  display: flex;
+  width: 100%;
+  display: grid;
+  grid-template-columns: 40% 40% 20%;
 
   input {
     padding: 3px;
@@ -58,9 +72,17 @@ export default {
     }
   }
 
-  input[type="text"] {
+  input[type="number"] {
     border-radius: 0;
-    border-right: 1px solid #12232e;
+    border-left: 1px solid #12232e;
+  }
+
+  &.nameless {
+    grid-template-columns: 1fr 20%;
+
+    input:first-child {
+      border-left: none;
+    }
   }
 }
 </style>
